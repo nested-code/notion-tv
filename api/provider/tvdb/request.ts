@@ -1,11 +1,11 @@
 import fetch, { Response } from 'node-fetch'
-import { stringify } from 'querystring'
+import { URL } from 'url'
 
-const URL = 'https://api4.thetvdb.com'
-const VERSION = 'v4'
+const API_URL = 'https://api4.thetvdb.com'
+const API_VERSION = 'v4'
 
 /** Param interface for GET request */
-type GetParams = NodeJS.Dict<string | string[] | number | boolean | null>
+type GetParams = Record<string, string | number | boolean>
 
 /** Param interface for POST request */
 type PostParams = Record<string, unknown>
@@ -80,6 +80,15 @@ export const checkSuccess = (json: ResponseBody) => {
 export const parseResponse = (res: Promise<Response>) =>
   res.then(checkHttp).then(checkJson).then(checkSuccess)
 
+/** Create a URL with optional params object to stringify. */
+export const createUrl = (endpoint: string, params: GetParams = {}) => {
+  const url = new URL(`${API_URL}/${API_VERSION}/${endpoint}`)
+  for (const key in params) {
+    url.searchParams.append(key, params[key].toString())
+  }
+  return url.href
+}
+
 /** Make GET request function using API key or token in headers. */
 export const makeGetRequest = <T extends DataType, P extends GetParams> (endpoint: string) =>
   /**
@@ -87,7 +96,7 @@ export const makeGetRequest = <T extends DataType, P extends GetParams> (endpoin
    * @param params Request payload
    */
   (auth: string, params: P) =>
-    parseResponse(fetch(`${URL}/${VERSION}/${endpoint}${params ? `?${stringify(params)}` : null}`, {
+    parseResponse(fetch(createUrl(endpoint, params), {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${auth}`,
@@ -102,7 +111,7 @@ export const makePostRequest = <T extends DataType, P extends PostParams> (endpo
    * @param params Request payload
    */
   (auth: string, params?: P) =>
-    parseResponse(fetch(`${URL}/${VERSION}/${endpoint}`, {
+    parseResponse(fetch(createUrl(endpoint), {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth}`,

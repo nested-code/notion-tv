@@ -10,6 +10,7 @@
 			body: JSON.stringify({ query })
 		})
     const data = await response.json()
+		console.log({ data })
 		results = data.length ? data : []
 	}
 
@@ -29,7 +30,7 @@
 	</main>
 	<section id='results'>
 		{#each results as series}
-			<img src={series.image_url} width='200px' height='auto' alt={series.name} />
+			<div><img src={series.image_url} width='200px' height='auto' alt={series.name} /></div>
 		{/each}
 	</section>
 	<section id='collection'>
@@ -73,7 +74,11 @@
 		font-weight: 100;
 	}
 
-	#results img {
-		margin: 0 2em
+	#results {
+		justify-content: center;
+		grid-template-columns: repeat(3, fit-content(33%));
+		display: grid;
+		grid-gap: 2em;
+		align-content: center;
 	}
 </style>
