@@ -1,0 +1,11 @@
+[dev]
+  autoLaunch = false
+  command = 'yarn build:watch'
+  functions = 'api/functions'
+  publish = 'public'
+  framework = 'svelte'
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

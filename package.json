@@ -1,0 +1,39 @@
+{
+  "name": "@nested-notion/tv",
+  "description": "Add your favourite shows to Notion and get a schedule of upcoming episodes.",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
+    "dev": "netlify dev",
+    "start": "sirv public --no-clear",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-typescript": "^8.0.0",
+    "@tsconfig/node12": "^1.0.9",
+    "@tsconfig/svelte": "^2.0.0",
+    "@types/jest": "^27.0.1",
+    "@types/node-fetch": "^2.5.12",
+    "jest": "^27.0.6",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0",
+    "svelte-check": "^2.0.0",
+    "svelte-preprocess": "^4.0.0",
+    "ts-jest": "^27.0.5",
+    "tslib": "^2.0.0",
+    "typescript": "^4.0.0"
+  },
+  "dependencies": {
+    "@netlify/functions": "^0.7.2",
+    "node-fetch": "^2.6.1",
+    "sirv-cli": "^1.0.0"
+  }
+}
