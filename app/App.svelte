@@ -1,22 +1,36 @@
 <script lang='ts'>
-	import type { SearchData } from '../api/provider/tvdb/api/search'
-	let query: string = ''
-	let results: SearchData = []
-	let debounce: NodeJS.Timeout | undefined
+	import type { Series } from '../api/functions/searchSeries'
+	import SeriesCard from './components/SeriesCard.svelte'
 
-	async function searchSeries () {
-		const response = await fetch(`/api/searchSeries`, {
+	let input: string = ''
+	let results: Series[] = []
+	let debounce: NodeJS.Timeout | undefined
+	const debounceTime = 500
+
+	const searchSeries = (query: string) => {
+		results = []
+		return fetch(`/api/searchSeries`, {
 			method: 'POST',
 			body: JSON.stringify({ query })
 		})
-    const data = await response.json()
-		console.log({ data })
-		results = data.length ? data : []
+			.then(res => res.json())
+			.then(data => results = data)
 	}
 
-	function handleInput () {
+	const makeFetchImageSrc = (id: string, url?: string) =>
+		() => url
+			? fetch(`/api/imageFetch`, {
+					method: 'POST',
+					body: JSON.stringify({ id, url })
+				})
+					.then(res => res.json())
+					.then(data => data?.location)
+			: Promise.resolve()
+
+	// Debounce reactively searching on input changes
+	$: {
 		clearTimeout(debounce)
-		debounce = setTimeout(searchSeries, 300)
+		debounce = setTimeout(() => searchSeries(input), debounceTime)
 	}
 </script>
 
@@ -26,11 +40,11 @@
 	</header>
 	<main id='search'>
 		<h1>Search TV Series</h1>	
-		<input type='text' name='query' placeholder='🔎' bind:value={query} on:keyup={handleInput} />
+		<input type='text' name='query' placeholder='🔎' bind:value={input} />
 	</main>
 	<section id='results'>
 		{#each results as series}
-			<div><img src={series.image_url} width='200px' height='auto' alt={series.name} /></div>
+			<SeriesCard data={series} fetchImageSrc={makeFetchImageSrc(series.tvdb_id, series.image_url)} />
 		{/each}
 	</section>
 	<section id='collection'>
@@ -76,7 +90,7 @@
 
 	#results {
 		justify-content: center;
-		grid-template-columns: repeat(3, fit-content(33%));
+		grid-template-columns: repeat(5, fit-content(20%));
 		display: grid;
 		grid-gap: 2em;
 		align-content: center;
